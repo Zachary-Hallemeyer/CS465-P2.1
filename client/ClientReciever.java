@@ -2,24 +2,30 @@ package client;
 
 import java.lang.Thread;
 import java.net.Socket;
+import java.util.Scanner;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
-import java.util.Scanner;
 import message.Message;
 import message.MessageTypes;
 import utils.NetworkUtilities;
 
-
+/**
+ * Class [ClientReciever] is created when a peer attempts to connect to this
+ * client. This class then processes the info and prints peer messsage to
+ * console
+ *
+ * @author Zachary M. Hallemeyer
+ */
 public class ClientReciever extends Thread {
 
   Socket socket;
-  // NodeInfo clientInfo;
 
   public ClientReciever(Socket socket) {
     this.socket = socket;
   }
 
+  // Accepts peer data and uses parseMessage() to process the info
   public void run() {
     try {
       // Create a new input stream for client
@@ -37,16 +43,17 @@ public class ClientReciever extends Thread {
       socket.close();
     }
     catch(Exception error) {
-      System.out.println("Something went wrong: " + error);
+      System.out.println("Could not process message from peer: " + error);
     }
   }
 
-  // FOR SONI
+  // Processes message depending on the COMMAND associated with the message
+  // and prints message to console
   private void parseMessage(Message message) {
     String name = message.getContent().toString().split(": ")[0];
     // Check which command is used
-    // Check if join command
 
+    // Check if join command
     if(message.getType() == MessageTypes.JOIN) {
       try {
         Client.users.add((NodeInfo) message.getContent());

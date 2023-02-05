@@ -10,12 +10,15 @@ import java.io.IOException;
 import client.Client;
 import utils.NetworkUtilities;
 
+/**
+ * Class [ClientSender] handles user input from command line, processes input,
+ * and sends it to all peers
+ *
+ * @author Zachary M. Hallemeyer
+ */
 public class ClientSender extends Thread {
 
-  public ClientSender() {
-
-  }
-
+  // Runs an infinite and sends all user input to peers
   public void run() {
     try {
       // Init. variables
@@ -43,7 +46,7 @@ public class ClientSender extends Thread {
       }
     }
     catch(Exception error) {
-      System.out.println("I/O error: " + error);
+      System.out.println("Could not send data to peers" + error);
     }
   }
 
