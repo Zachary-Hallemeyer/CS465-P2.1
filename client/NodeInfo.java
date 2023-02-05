@@ -17,4 +17,12 @@ public class NodeInfo implements Serializable{
     this.ip = ip;
     this.port = port;
   }
+
+  public String getIP() {
+    return ip;
+  }
+
+  public int getPort() {
+    return port;
+  }
 }

@@ -8,6 +8,7 @@ import message.Message;
 import message.MessageTypes;
 import java.io.IOException;
 import client.Client;
+import utils.NetworkUtilities;
 
 public class ClientSender extends Thread {
 
@@ -19,7 +20,6 @@ public class ClientSender extends Thread {
     try {
       // Init. variables
       Scanner scanner = new Scanner(System.in);
-      // ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
       String userInput = "";
 
       // Infinite loop to gather input to send to server
@@ -27,12 +27,19 @@ public class ClientSender extends Thread {
         // Get user input
         userInput = scanner.nextLine();
 
-
         // Modify input into type Message
         Message message = craftMessage(userInput);
 
         // Send message to all peers
         Client.sendMessageToPeers(message);
+
+        // Check if LEAVE/SHUTDOWN/SHUTDOWN_ALL
+        if(   message.getType() == MessageTypes.LEAVE
+           || message.getType() == MessageTypes.SHUTDOWN
+           || message.getType() == MessageTypes.SHUTDOWN_ALL) {
+             // Shutdown program
+             Client.stopProgram();
+           }
       }
     }
     catch(Exception error) {
@@ -56,7 +63,7 @@ public class ClientSender extends Thread {
     }
     else if(firstWord.contains("LEAVE")){
       type = MessageTypes.LEAVE;
-      userInput = userInput.replace("LEAVE", "");
+      userInput = userInput.replace("LEAVE", Client.port + " ");
     }
     else if(firstWord.contains("SHUTDOWN_ALL")){
       type = MessageTypes.SHUTDOWN_ALL;
@@ -64,7 +71,7 @@ public class ClientSender extends Thread {
     }
     else if(firstWord.contains("SHUTDOWN")){
       type = MessageTypes.SHUTDOWN;
-      userInput = userInput.replace("SHUTDOWN", "");
+      userInput = userInput.replace("SHUTDOWN", Client.port + " ");
     }
     else if(firstWord.contains("JOIN")){
       type = MessageTypes.JOIN;
@@ -72,8 +79,7 @@ public class ClientSender extends Thread {
     }
 
     // Create new message and return it
-    // TODO: ADD NAME
-    return new Message(type, ":" + userInput);
+    return new Message(type, Client.name + ": " + userInput);
   }
 
 }
