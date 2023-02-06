@@ -60,23 +60,23 @@ public class ClientSender extends Thread {
     // Check if any valid command is used
     // If there is a command, set type accordingly to command
     // and delete command from input
-    if(firstWord.contains("NOTE")){
+    if(firstWord.contains("NOTE")){ // Check for NOTE command
       type = MessageTypes.NOTE;
       userInput = userInput.replace("NOTE", "");
     }
-    else if(firstWord.contains("LEAVE")){
+    else if(firstWord.contains("LEAVE")){ // Check for LEAVE command
       type = MessageTypes.LEAVE;
       userInput = userInput.replace("LEAVE", Client.port + " ");
     }
-    else if(firstWord.contains("SHUTDOWN_ALL")){
+    else if(firstWord.contains("SHUTDOWN_ALL")){ // Check for SHUTDOWN_ALL command
       type = MessageTypes.SHUTDOWN_ALL;
       userInput = userInput.replace("SHUTDOWN_ALL", "");
     }
-    else if(firstWord.contains("SHUTDOWN")){
+    else if(firstWord.contains("SHUTDOWN")){  // Check for SHUTDOWN command
       type = MessageTypes.SHUTDOWN;
       userInput = userInput.replace("SHUTDOWN", Client.port + " ");
     }
-    else if(firstWord.contains("JOIN")){
+    else if(firstWord.contains("JOIN")){  // Check for JOIN
       type = MessageTypes.JOIN;
       userInput = userInput.replace("JOIN", "");
     }

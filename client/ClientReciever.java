@@ -32,13 +32,13 @@ public class ClientReciever extends Thread {
       ObjectInputStream inputStream = new ObjectInputStream(
                                             socket.getInputStream());
 
+      // Get message from input stream
       Message newMessage = (Message) inputStream.readObject();
 
-      // Check if join message
-        // Send active client list
+      // Parse and process message
       parseMessage(newMessage);
 
-
+      // Close socket and input stream
       inputStream.close();
       socket.close();
     }
@@ -71,6 +71,8 @@ public class ClientReciever extends Thread {
     // Check if LEAVE command
     else if(message.getType() == MessageTypes.SHUTDOWN
             || message.getType() == MessageTypes.LEAVE) {
+
+      // These commands have the following format "Name: <Port Number of peer> message"
 
       // Split string with name (index of 0) and message content (index of 1)
       String[] messageArray = message.getContent().toString().split(": ");

@@ -36,6 +36,17 @@ public class Client {
     runServer(port);
   }
 
+  // Add this client's ip and port to users list
+  private static void createNewChat() {
+    // Get port from config file
+    System.out.println("Creating new chat");
+    users.add(new NodeInfo(NetworkUtilities.getMyIP(),port));
+  }
+
+  // Get the following info from user
+  // 1. Create or join chat
+  // 2. Get name
+  // 3. join/create from config file or information from command line
   private static void getUserConnectInput() {
     // Init. variables
     Scanner scanner = new Scanner(System.in);
@@ -120,36 +131,10 @@ public class Client {
     }
   }
 
-  // Starts a server socket
-  // When a request is accepted a ClientReciever thread is created to process
-  // request
-  private static void runServer(int port) {
-    System.out.println("Server started");
-    try {
-      // Start server and init. variables
-      ServerSocket serverSocket = new ServerSocket(port);
-      Socket clientConnection = null;
-
-      // Start ClientSender thread to handle user input
-      new ClientSender().start();
-
-      // Infinite loop to listen to incoming requests
-      while(true) {
-        // Accept new request
-        clientConnection = serverSocket.accept();
-
-        // Starts ClientReciever thread
-        new ClientReciever(clientConnection).start();
-      }
-
-    }
-
-    catch(Exception error) {
-      System.out.println("Could not create server socket: " + error);
-    }
-  }
-
-  @SuppressWarnings("unchecked")
+  // Join existing chat by connecting to peer. The peer then sends back a
+  // list of NodeInfo containing all active peers
+  @SuppressWarnings("unchecked") // For muting the error message for converting
+                                 // network message into a list of NodeInfo
   private static void joinExistingChat(String connectIP, int connectPort) {
     // Attempt to connect to existing chat network
     try {
@@ -179,11 +164,49 @@ public class Client {
     }
   }
 
-  // Add this client's ip and port to users list
-  private static void createNewChat() {
-    // Get port from config file
-    System.out.println("Creating new chat");
-    users.add(new NodeInfo(NetworkUtilities.getMyIP(),port));
+  // Removes user from list based on the ip and port provided
+  public static void removeUserFromUserList(String userIP, int userPort) {
+    for(int index = 0; index < users.size(); index++) {
+      if(   users.get(index).getIP().equals(userIP)
+         && users.get(index).getPort() == userPort) {
+           users.remove(users.get(index));
+      }
+    }
+  }
+
+  // Starts a server socket
+  // When a request is accepted a ClientReciever thread is created to process
+  // request
+  private static void runServer(int port) {
+    System.out.println("Server started");
+    try {
+      // Start server and init. variables
+      ServerSocket serverSocket = new ServerSocket(port);
+      Socket clientConnection = null;
+
+      // Start ClientSender thread to handle user input
+      new ClientSender().start();
+
+      // Infinite loop to listen to incoming requests
+      while(true) {
+        // Accept new request
+        clientConnection = serverSocket.accept();
+
+        // Starts ClientReciever thread
+        new ClientReciever(clientConnection).start();
+      }
+
+    }
+
+    catch(Exception error) {
+      System.out.println("Could not create server socket: " + error);
+    }
+  }
+
+  // Prints closing message and closes program
+  public static void stopProgram() {
+    System.out.println("Shuting down chat program");
+    System.exit(0);
   }
 
   // Sends message to all peers
@@ -217,21 +240,5 @@ public class Client {
         }
       }
     }
-  }
-
-  // Removes user from list based on the ip and port provided
-  public static void removeUserFromUserList(String userIP, int userPort) {
-    for(int index = 0; index < users.size(); index++) {
-      if(   users.get(index).getIP().equals(userIP)
-         && users.get(index).getPort() == userPort) {
-           users.remove(users.get(index));
-      }
-    }
-  }
-
-  // Prints closing message and closes program
-  public static void stopProgram() {
-    System.out.println("Shuting down chat program");
-    System.exit(0);
   }
 }
